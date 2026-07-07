@@ -11,31 +11,33 @@
     body { font-family: system-ui, sans-serif; background-color: var(--bs-light); color: #334155; -webkit-font-smoothing: antialiased; }
     .fw-black { font-weight: 800 !important; } .fs-7 { font-size: 0.8rem !important; }
     .spinner-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(30, 41, 59, 0.45); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-    #sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); height: 100vh; position: sticky; top: 0; z-index: 1040; }
-    .nav-pills .nav-link { border-radius: 8px; padding: 0.6rem 1rem; font-weight: 500; transition: all 0.2s ease; color: #fff; }
+    #sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); height: 100vh; position: sticky; top: 0; z-index: 1040; transition: transform 0.25s ease-in-out; }
+    .nav-pills .nav-link { border-radius: 8px; padding: 0.6rem 1rem; font-weight: 500; color: #fff; transition: background 0.2s ease; }
     .nav-pills .nav-link.active { background-color: var(--bs-primary); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3); }
     .card-metric { transition: transform 0.2s ease; } .card-metric:hover { transform: translateY(-2px); }
     .text-numeric { font-variant-numeric: tabular-nums; font-weight: 700; }
     .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); z-index: 1030; }
     @media (max-width: 767.98px) {
-      #sidebar { position: fixed; left: 0; top: 0; height: 100vh; margin-left: 0; transition: transform 0.25s ease-in-out; transform: translateX(0); }
+      #sidebar { position: fixed; left: 0; top: 0; height: 100vh; margin-left: 0; transform: translateX(0); }
       #sidebar.collapsed { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
 
+  <!-- MASTER SPINNER LAYER -->
   <div id="globalSpinner" class="spinner-overlay d-none">
     <div class="spinner-border text-primary shadow" role="status" style="width: 3rem; height: 3rem;"></div>
   </div>
 
   <div class="d-flex align-items-stretch min-vh-100 position-relative overflow-hidden">
     
+    <!-- SYSTEM NAVIGATION DRAWER MENU -->
     <nav id="sidebar" class="bg-dark text-white flex-shrink-0 collapsed">
       <div class="sidebar-header p-3 border-bottom border-secondary d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
           <span class="material-icons-round text-warning me-2 fs-3">storefront</span>
-          <h5 class="m-0 fw-bold">Kawad Swad API</h5>
+          <h5 class="m-0 fw-bold">Kawad Swad CRM</h5>
         </div>
         <button class="btn btn-sm btn-dark d-md-none text-white" onclick="toggleSidebarMenu(false)">
           <span class="material-icons-round">close</span>
@@ -43,16 +45,17 @@
       </div>
       <div class="p-2">
         <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item mb-1"><a href="#" id="navDashboard" class="nav-link active d-flex align-items-center" onclick="switchView('dashboard')"><span class="material-icons-round me-2">dashboard</span>Dashboard</a></li>
+          <li class="nav-item mb-1"><a href="#" id="navDashboard" class="nav-link active d-flex align-items-center" onclick="switchView('dashboard')"><span class="material-icons-round me-2">dashboard</span>Dashboard Matrix</a></li>
           <li class="nav-item mb-1"><a href="#" id="navShops" class="nav-link d-flex align-items-center" onclick="switchView('shops')"><span class="material-icons-round me-2">store</span>Shops Master</a></li>
           <li class="nav-item mb-1"><a href="#" id="navVisits" class="nav-link d-flex align-items-center" onclick="switchView('visits')"><span class="material-icons-round me-2">assignment_turned_in</span>Market Visits</a></li>
-          <li class="nav-item mb-1"><a href="#" id="navOrders" class="nav-link d-flex align-items-center" onclick="switchView('orders')"><span class="material-icons-round me-2">shopping_cart</span>Orders</a></li>
+          <li class="nav-item mb-1"><a href="#" id="navOrders" class="nav-link d-flex align-items-center" onclick="switchView('orders')"><span class="material-icons-round me-2">shopping_cart</span>Commercial Orders</a></li>
         </ul>
       </div>
     </nav>
 
     <div id="sidebarBackdrop" class="sidebar-backdrop d-none" onclick="toggleSidebarMenu(false)"></div>
 
+    <!-- MAIN CRM CLIENT CONTENT CANVAS -->
     <main class="flex-grow-1 bg-light position-relative overflow-x-hidden d-flex flex-column min-vh-100">
       <header class="navbar navbar-expand navbar-light bg-white px-4 border-bottom shadow-sm sticky-top">
         <div class="container-fluid p-0">
@@ -65,67 +68,71 @@
 
       <div class="container-fluid p-3 p-md-4 flex-grow-1" id="mainViewContentBlock">
         
+        <!-- DASHBOARD ELEMENT DISPLAY PORT -->
         <div id="viewContainerDashboard">
           <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-xl-4 mb-4">
-            <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-primary border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">Total Shops</h6><h3 class="m-0 text-numeric" id="metricTotalShops">0</h3></div></div>
+            <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-primary border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">Total Outlets</h6><h3 class="m-0 text-numeric" id="metricTotalShops">0</h3></div></div>
             <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-success border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">Active Retailers</h6><h3 class="m-0 text-success text-numeric" id="metricActiveRetailers">0</h3></div></div>
             <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-info border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">Villages Covered</h6><h3 class="m-0 text-info text-numeric" id="metricVillagesCovered">0</h3></div></div>
-            <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-warning border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">Sync Channels</h6><h3 class="m-0 text-warning text-numeric">API OK</h3></div></div>
+            <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-warning border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">System Status</h6><h3 class="m-0 text-warning fs-5 fw-bold">Decoupled API OK</h3></div></div>
           </div>
         </div>
         
+        <!-- SHOPS ELEMENT DISPLAY PORT -->
         <div id="viewContainerShops" class="d-none">
-          <div class="card border-0 shadow-sm p-3 mb-3 bg-white">
-            <div class="row g-2">
-              <div class="col-6"><input type="text" id="searchShopName" class="form-control" placeholder="Shop name..." oninput="filterShopsDirectory()"></div>
-              <div class="col-6"><button class="btn btn-primary w-100 btn-sm py-2" onclick="openShopFormModal(false)">+ Add Shop</button></div>
-            </div>
-          </div>
-          <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-dark"><tr><th>Shop Details</th><th>Owner Info</th><th>Territory</th><th>Status</th><th>Actions</th></tr></thead><tbody id="shopsDirectoryTableBodyContainer"></tbody></table></div></div>
+          <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-8"><input type="text" id="searchShopName" class="form-control" placeholder="Search Shop Name..." oninput="filterShopsDirectory()"></div><div class="col-4"><button class="btn btn-primary w-100 py-2 btn-sm fw-medium" onclick="openShopFormModal(false)">+ New Shop</button></div></div></div>
+          <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-dark"><tr><th>Shop Name</th><th>Owner Info</th><th>Territory Location</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody id="shopsDirectoryTableBodyContainer"></tbody></table></div></div>
         </div>
 
+        <!-- VISITS ELEMENT DISPLAY PORT -->
         <div id="viewContainerVisits" class="d-none">
-          <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-6"><input type="text" id="searchVisitShopName" class="form-control" placeholder="Shop..." oninput="filterVisitsDirectory()"></div><div class="col-6"><button class="btn btn-primary w-100 btn-sm py-2" onclick="openVisitFormModal(false)">+ Log Visit</button></div></div></div>
-          <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-dark"><tr><th>Shop</th><th>Visit Date</th><th>Outcome Status</th><th>Next Follow-up</th><th>Actions</th></tr></thead><tbody id="visitsDirectoryTableBodyContainer"></tbody></table></div></div>
+          <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-8"><input type="text" id="searchVisitShopName" class="form-control" placeholder="Search by Shop Name..." oninput="filterVisitsDirectory()"></div><div class="col-4"><button class="btn btn-primary w-100 py-2 btn-sm fw-medium" onclick="openVisitFormModal(false)">+ Log Visit</button></div></div></div>
+          <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-dark"><tr><th>Shop Outlet</th><th>Date Visited</th><th>Outcome</th><th>Next Follow-up</th><th class="text-end">Actions</th></tr></thead><tbody id="visitsDirectoryTableBodyContainer"></tbody></table></div></div>
         </div>
 
+        <!-- ORDERS ELEMENT DISPLAY PORT -->
         <div id="viewContainerOrders" class="d-none">
-          <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-6"><input type="text" id="searchOrderIdText" class="form-control" placeholder="Order details..." oninput="filterOrdersDirectory()"></div><div class="col-6"><button class="btn btn-primary w-100 btn-sm py-2" onclick="openOrderFormModal(false)">+ Create Order</button></div></div></div>
-          <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-dark"><tr><th>Order ID</th><th>Target Shop</th><th>Product</th><th>Qty</th><th>Total Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ordersDirectoryTableBodyContainer"></tbody></table></div></div>
+          <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-8"><input type="text" id="searchOrderIdText" class="form-control" placeholder="Search Invoice / Shop Details..." oninput="filterOrdersDirectory()"></div><div class="col-4"><button class="btn btn-primary w-100 py-2 btn-sm fw-medium" onclick="openOrderFormModal(false)">+ Create Order</button></div></div></div>
+          <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-dark"><tr><th>Order Code</th><th>Target Account</th><th>Product Line</th><th>Quantity</th><th>Grand Total</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody id="ordersDirectoryTableBodyContainer"></tbody></table></div></div>
         </div>
 
       </div>
     </main>
   </div>
 
+  <!-- INTERACTIVE OVERLAY MODALS STACK -->
+  <!-- SHOPS MODAL LAYER -->
   <div class="modal fade" id="shopFormEditorModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
-      <div class="modal-content"><form id="crmShopMutationForm" onsubmit="handleFormSubmissionEntry(event)" novalidate>
-        <div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="shopFormEditorModalLabel">Add Shop</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmShopMutationForm" onsubmit="handleFormSubmissionEntry(event)" novalidate>
+        <div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="shopFormEditorModalLabel">Add Shop Record</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
         <div class="modal-body p-3"><input type="hidden" id="fieldRowId" name="rowId"><div class="row g-2">
           <div class="col-12"><label class="form-label small fw-bold">Shop Name *</label><input type="text" class="form-control" id="fieldShopName" name="shopName" required></div>
           <div class="col-6"><label class="form-label small fw-bold">Owner Name *</label><input type="text" class="form-control" id="fieldOwnerName" name="ownerName" required></div>
-          <div class="col-6"><label class="form-label small fw-bold">Mobile *</label><input type="tel" class="form-control" id="fieldMobileNumber" name="mobileNumber" pattern="[0-9]{10}" required></div>
+          <div class="col-6"><label class="form-label small fw-bold">Mobile Number *</label><input type="tel" class="form-control" id="fieldMobileNumber" name="mobileNumber" pattern="[0-9]{10}" placeholder="10 digits" required></div>
           <div class="col-6"><label class="form-label small fw-bold">Village/City *</label><input type="text" class="form-control" id="fieldVillage" name="village" required></div>
-          <div class="col-6"><label class="form-label small fw-bold">District</label><input type="text" class="form-control" id="fieldDistrict" name="district"></div>
+          <div class="col-6"><label class="form-label small fw-bold">District</label><input type="text" class="form-control" id="fieldDistrict" name="district" placeholder="e.g. Indore"></div>
+          <div class="col-6"><label class="form-label small fw-bold">Shop Type</label><input type="text" class="form-control" id="fieldShopType" name="shopType" placeholder="e.g. Kirana, Wholesale"></div>
           <div class="col-6"><label class="form-label small fw-bold">Route Block</label><input type="text" class="form-control" id="fieldRoute" name="route"></div>
-          <div class="col-6"><label class="form-label small fw-bold">Beat Day</label><select class="form-select" id="fieldBeatDay" name="beatDay"><option value="">Flexible</option><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select></div>
-          <div class="col-6"><label class="form-label small fw-bold">Potential</label><select class="form-select" id="fieldPotential" name="potential"><option value="High Tier">High</option><option value="Medium Tier" selected>Medium</option><option value="Low Tier">Low</option></select></div>
-          <div class="col-6"><label class="form-label small fw-bold">Status</label><select class="form-select" id="fieldStatus" name="status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+          <div class="col-6"><label class="form-label small fw-bold">Beat Day</label><select class="form-select" id="fieldBeatDay" name="beatDay"><option value="">Flexible Beat</option><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select></div>
+          <div class="col-6"><label class="form-label small fw-bold">Potential</label><select class="form-select" id="fieldPotential" name="potential"><option value="High Tier">High Volume</option><option value="Medium Tier" selected>Medium Volume</option><option value="Low Tier">Low Volume</option></select></div>
+          <div class="col-6"><label class="form-label small fw-bold">Visit Status</label><select class="form-select" id="fieldStatus" name="status"><option value="Active">Active Outlets</option><option value="Inactive">Inactive</option><option value="Lead Channel">Lead / Prospect</option></select></div>
+          <div class="col-12"><label class="form-label small fw-bold">Remarks</label><input type="text" class="form-control" id="fieldRemarks" name="remarks"></div>
         </div></div>
-        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" class="btn btn-primary">Save Shop</button></div>
-      </form></div>
-    </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Commit Entry</button></div>
+    </form></div></div>
   </div>
 
+  <!-- VISITS LOG MODAL LAYER -->
   <div class="modal fade" id="visitFormEditorModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmVisitMutationForm" onsubmit="handleVisitFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="visitFormEditorModalLabel">Log Visit</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldVisitRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Select Shop *</label><select class="form-select" id="fieldVisitShopNameSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Visit Date *</label><input type="date" class="form-control" id="fieldVisitDate" name="visitDate" required></div><div class="col-6"><label class="form-label small fw-bold">Outcome *</label><select class="form-select" id="fieldVisitOutcome" name="outcome" required><option value="Order Taken">Order Taken</option><option value="Follow-up Required" selected>Follow-up Required</option><option value="Not Interested">Not Interested</option><option value="Owner Not Available">Owner Not Available</option></select></div><div class="col-12"><label class="form-label small fw-bold">Sample Given *</label><select class="form-select" id="fieldVisitSampleGiven" name="sampleGiven" required><option value="No Sample Given">No Sample Given</option><option value="Moong Papad Sample">Moong Papad Sample</option><option value="Urad Papad Sample">Urad Papad Sample</option></select></div><div class="col-6"><label class="form-label small fw-bold">Comp Brand</label><input type="text" class="form-control" id="fieldVisitCompBrand" name="competitorBrand"></div><div class="col-6"><label class="form-label small fw-bold">Comp Price</label><input type="text" class="form-control" id="fieldVisitCompPrice" name="competitorPrice"></div><div class="col-12"><label class="form-label small fw-bold">Notes</label><textarea class="form-control" id="fieldVisitNotes" name="notes" rows="2"></textarea></div><div class="col-12"><label class="form-label small fw-bold">Next Follow-up Date</label><input type="date" class="form-control" id="fieldVisitNextFollowup" name="nextFollowupDate"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" class="btn btn-primary">Save Visit</button></div></form></div></div>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmVisitMutationForm" onsubmit="handleVisitFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="visitFormEditorModalLabel">Log Visit Audit</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldVisitRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Select Target Shop *</label><select class="form-select" id="fieldVisitShopNameSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Visit Date *</label><input type="date" class="form-control" id="fieldVisitDate" name="visitDate" required></div><div class="col-6"><label class="form-label small fw-bold">Outcome Status *</label><select class="form-select" id="fieldVisitOutcome" name="outcome" required><option value="Order Taken">Order Taken</option><option value="Follow-up Required" selected>Follow-up Required</option><option value="Not Interested">Not Interested</option><option value="Owner Not Available">Owner Not Available</option></select></div><div class="col-12"><label class="form-label small fw-bold">Sample Given *</label><select class="form-select" id="fieldVisitSampleGiven" name="sampleGiven" required><option value="No Sample Given">No Sample Given</option><option value="Moong Papad Sample">Moong Papad Sample</option><option value="Urad Papad Sample">Urad Papad Sample</option><option value="Chana Papad Sample">Chana Papad Sample</option><option value="Punjabi Papad Sample">Punjabi Papad Sample</option><option value="Special Black Masala Sample">Special Black Masala Sample</option></select></div><div class="col-6"><label class="form-label small fw-bold">Competitor Brand</label><input type="text" class="form-control" id="fieldVisitCompBrand" name="competitorBrand"></div><div class="col-6"><label class="form-label small fw-bold">Competitor Price</label><input type="text" class="form-control" id="fieldVisitCompPrice" name="competitorPrice"></div><div class="col-12"><label class="form-label small fw-bold">Field Notes Summary</label><textarea class="form-control" id="fieldVisitNotes" name="notes" rows="2"></textarea></div><div class="col-12"><label class="form-label small fw-bold">Next Follow-up Target Date</label><input type="date" class="form-control" id="fieldVisitNextFollowup" name="nextFollowupDate"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save Visit</button></div></form></div></div>
   </div>
 
+  <!-- ORDERS FORM MODAL LAYER -->
   <div class="modal fade" id="orderFormEditorModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmOrderMutationForm" onsubmit="handleOrderFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="orderFormEditorModalLabel">Create Order</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldOrderRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Select Shop *</label><select class="form-select" id="fieldOrderShopSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Order Date *</label><input type="date" class="form-control" id="fieldOrderDate" name="orderDate" required></div><div class="col-6"><label class="form-label small fw-bold">Product Item *</label><select class="form-select" id="fieldOrderProductSelect" name="productName" onchange="autoCalculateOrderPricingRow()" required></select></div><div class="col-6"><label class="form-label small fw-bold">Quantity *</label><input type="number" class="form-control" id="fieldOrderQuantity" name="quantity" min="1" required oninput="autoCalculateOrderPricingRow()"></div><div class="col-6"><label class="form-label small fw-bold">Rate (₹) *</label><input type="number" class="form-control" id="fieldOrderRate" name="rate" min="0" required oninput="autoCalculateOrderPricingRow()"></div><div class="col-12 mt-2"><div class="p-2 bg-light border rounded text-end"><span class="small text-muted me-2">Grand Total:</span><span class="h5 fw-bold text-numeric" id="lblOrderComputedTotal">₹ 0.00</span></div><input type="hidden" id="fieldOrderStatus" name="orderStatus" value="Pending Delivery"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" class="btn btn-primary">Commit Order</button></div></form></div></div>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmOrderMutationForm" onsubmit="handleOrderFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="orderFormEditorModalLabel">Commit New Order</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldOrderRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Buyer Shop Target *</label><select class="form-select" id="fieldOrderShopSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Booking Date *</label><input type="date" class="form-control" id="fieldOrderDate" name="orderDate" required></div><div class="col-6"><label class="form-label small fw-bold">Select Product *</label><select class="form-select" id="fieldOrderProductSelect" name="productName" onchange="autoCalculateOrderPricingRow()" required></select></div><div class="col-6"><label class="form-label small fw-bold">Quantity (Boxes/Units) *</label><input type="number" class="form-control" id="fieldOrderQuantity" name="quantity" min="1" required oninput="autoCalculateOrderPricingRow()"></div><div class="col-6"><label class="form-label small fw-bold">Rate Per Unit (₹) *</label><input type="number" class="form-control" id="fieldOrderRate" name="rate" min="0" step="0.01" required oninput="autoCalculateOrderPricingRow()"></div><div class="col-12 mt-3"><div class="p-3 bg-light border border-secondary-subtle rounded text-end"><span class="small text-muted me-2">Calculated Total Billing Amount:</span><span class="h4 fw-black text-dark text-numeric" id="lblOrderComputedTotal">₹ 0.00</span></div><input type="hidden" id="fieldOrderStatus" name="orderStatus" value="Pending Delivery"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Book Invoice</button></div></form></div></div>
   </div>
 
+  <!-- TOAST ALERT PANEL -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
     <div id="appGlobalToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex"><div class="toast-body d-flex align-items-center gap-2"><span id="toastIconSlot" class="material-icons-round fs-5">info</span><span id="toastMessageSlot"></span></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
@@ -134,7 +141,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // DEFINE YOUR PRODUCTION API ENDPOINT ROOT BINDING STRING MACRO LOGIC PATH
+    // BIND YOUR LIVE GOOGLE APPS SCRIPT MACRO URL HERE
     const API_ENDPOINT_ROOT = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE"; 
 
     let systemGlobalState = {
@@ -142,19 +149,15 @@
       loadedModulesLog: { shops: false, visits: false, orders: false }
     };
 
-    let appFormModalBootstrapInstance, appViewerModalBootstrapInstance, appToastMessageSystemBootstrapInstance, appVisitFormModalBootstrapInstance, appOrderFormModalBootstrapInstance;
+    let appFormModalBootstrapInstance, appToastMessageSystemBootstrapInstance, appVisitFormModalBootstrapInstance, appOrderFormModalBootstrapInstance;
 
     document.addEventListener('DOMContentLoaded', () => {
-      initializeComponentBootstrapInstances();
-      executeInitialAppBootHandshake();
-    });
-
-    function initializeComponentBootstrapInstances() {
       appFormModalBootstrapInstance = new bootstrap.Modal(document.getElementById('shopFormEditorModal'));
-      appToastMessageSystemBootstrapInstance = new bootstrap.Toast(document.getElementById('appGlobalToast'), { delay: 3000 });
+      appToastMessageSystemBootstrapInstance = new bootstrap.Toast(document.getElementById('appGlobalToast'), { delay: 3500 });
       appVisitFormModalBootstrapInstance = new bootstrap.Modal(document.getElementById('visitFormEditorModal'));
       appOrderFormModalBootstrapInstance = new bootstrap.Modal(document.getElementById('orderFormEditorModal'));
-    }
+      executeInitialAppBootHandshake();
+    });
 
     function toggleSidebarMenu(open) {
       const sidebar = document.getElementById('sidebar');
@@ -168,7 +171,6 @@
       fetch(`${API_ENDPOINT_ROOT}?action=getInitialState`)
         .then(res => res.json())
         .then(data => {
-          if (data.error) throw new Error(data.message);
           systemGlobalState.dashboardMetricsSnapshot = data.metrics;
           systemGlobalState.minimalShopLookupList = data.shopLookup;
           systemGlobalState.cachedProductsCatalog = data.productsCatalog;
@@ -176,7 +178,7 @@
           populateFormFieldsDropdownsFromLookups();
           toggleInterfaceLoadingStateSpinner(false);
         })
-        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Boot API Error: " + err.message, "error"); });
+        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Connection Error: Check macro parameters logs.", "error"); });
     }
 
     function switchView(target) {
@@ -187,7 +189,7 @@
       });
       document.getElementById(`viewContainer${target.charAt(0).toUpperCase() + target.slice(1)}`).classList.remove('d-none');
       document.getElementById(`nav${target.charAt(0).toUpperCase() + target.slice(1)}`).classList.add('active');
-      document.getElementById('viewTitleHeader').textContent = target.toUpperCase() + " Directory Matrix";
+      document.getElementById('viewTitleHeader').textContent = target.charAt(0).toUpperCase() + target.slice(1) + " Directory Space";
 
       if (target === 'shops' && !systemGlobalState.loadedModulesLog.shops) lazyLoadModule('shops', 'getShops', renderShopsDirectoryGridData);
       if (target === 'visits' && !systemGlobalState.loadedModulesLog.visits) lazyLoadModule('visits', 'getVisits', renderVisitsDirectoryGridData);
@@ -206,43 +208,48 @@
           renderFunc();
           toggleInterfaceLoadingStateSpinner(false);
         })
-        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Fetch failure structural data logs: " + err.message, "error"); });
+        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Lazy Load Error.", "error"); });
     }
 
-    function sendAPICommandPost(actionKey, payloadData, successCallback) {
+    function sendAPICommandViaGet(actionKey, payloadData, successCallback) {
       toggleInterfaceLoadingStateSpinner(true);
-      fetch(API_ENDPOINT_ROOT, {
-        method: "POST",
-        mode: "no-cors", // Bypasses explicit script validation redirects smoothly across Google redirect servers
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: actionKey, data: payloadData })
-      })
-      .then(() => {
-        triggerSystemNotificationAlert("Transaction sync broadcast completely emitted.", "success");
-        successCallback();
-      })
-      .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("POST pipeline intercept trace: " + err.message, "error"); });
+      
+      // Build pure tracking query string parameters to eliminate structural CORS redirects completely
+      const queryString = Object.keys(payloadData).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(payloadData[key])}`).join('&');
+      
+      fetch(`${API_ENDPOINT_ROOT}?action=${actionKey}&${queryString}`)
+        .then(res => res.json())
+        .then(res => {
+          toggleInterfaceLoadingStateSpinner(false);
+          if(res.success) {
+            triggerSystemNotificationAlert(res.message, "success");
+            successCallback();
+          } else {
+            triggerSystemNotificationAlert(res.message || "Database write rejected.", "error");
+          }
+        })
+        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Server Commit Error.", "error"); });
     }
 
     function handleFormSubmissionEntry(e) {
       e.preventDefault(); const form = e.currentTarget; if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
       appFormModalBootstrapInstance.hide();
       const fd = new FormData(form); const obj = {}; fd.forEach((v, k) => obj[k] = v.trim());
-      sendAPICommandPost("saveShop", obj, () => { systemGlobalState.loadedModulesLog.shops = false; executeInitialAppBootHandshake(); switchView('shops'); });
+      sendAPICommandViaGet("saveShop", obj, () => { systemGlobalState.loadedModulesLog.shops = false; executeInitialAppBootHandshake(); switchView('shops'); });
     }
 
     function handleVisitFormSubmissionEntry(e) {
       e.preventDefault(); const form = e.currentTarget; if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
       appVisitFormModalBootstrapInstance.hide();
       const fd = new FormData(form); const obj = {}; fd.forEach((v, k) => obj[k] = v.trim());
-      sendAPICommandPost("saveVisit", obj, () => { systemGlobalState.loadedModulesLog.visits = false; executeInitialAppBootHandshake(); switchView('visits'); });
+      sendAPICommandViaGet("saveVisit", obj, () => { systemGlobalState.loadedModulesLog.visits = false; executeInitialAppBootHandshake(); switchView('visits'); });
     }
 
     function handleOrderFormSubmissionEntry(e) {
       e.preventDefault(); const form = e.currentTarget; if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
       appOrderFormModalBootstrapInstance.hide();
       const fd = new FormData(form); const obj = {}; fd.forEach((v, k) => obj[k] = v.trim());
-      sendAPICommandPost("saveOrder", obj, () => { systemGlobalState.loadedModulesLog.orders = false; executeInitialAppBootHandshake(); switchView('orders'); });
+      sendAPICommandViaGet("saveOrder", obj, () => { systemGlobalState.loadedModulesLog.orders = false; executeInitialAppBootHandshake(); switchView('orders'); });
     }
 
     function renderDashboardMetricsUIElements() {
@@ -255,19 +262,17 @@
     function populateFormFieldsDropdownsFromLookups() {
       const vSel = document.getElementById('fieldVisitShopNameSelect');
       const oSel = document.getElementById('fieldOrderShopSelect');
-      const fShop = document.getElementById('filterOrderShopSelect');
       const oProd = document.getElementById('fieldOrderProductSelect');
-      const fProd = document.getElementById('filterOrderProductSelect');
       if(!vSel) return;
-      vSel.innerHTML = '<option value="">-- Choose Account --</option>';
-      oSel.innerHTML = '<option value="">-- Choose Account --</option>';
+      vSel.innerHTML = '<option value="">-- Choose Target Account --</option>';
+      oSel.innerHTML = '<option value="">-- Choose Buyer Account --</option>';
       systemGlobalState.minimalShopLookupList.forEach(s => {
-        vSel.innerHTML += `<option value="${s.name}">${s.name}</option>`;
-        oSel.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+        vSel.innerHTML += `<option value="${s.name}">${s.name} (${s.village})</option>`;
+        oSel.innerHTML += `<option value="${s.name}">${s.name} (${s.village})</option>`;
       });
-      oProd.innerHTML = '<option value="">-- Choose Stock --</option>';
+      oProd.innerHTML = '<option value="">-- Choose Catalog Product --</option>';
       systemGlobalState.cachedProductsCatalog.forEach(p => {
-        oProd.innerHTML += `<option value="${p.productName}">${p.productName}</option>`;
+        oProd.innerHTML += `<option value="${p.productName}">${p.productName} (₹${p.sellingPrice.toFixed(2)})</option>`;
       });
     }
 
@@ -278,27 +283,27 @@
       const match = systemGlobalState.cachedProductsCatalog.find(p => p.productName === prod);
       if (match && document.activeElement.id === 'fieldOrderProductSelect') rateInput.value = match.sellingPrice;
       const total = qty * (parseFloat(rateInput.value) || 0);
-      document.getElementById('lblOrderComputedTotal').textContent = `₹ ${total.toFixed(2)}`;
+      document.getElementById('lblOrderComputedTotal').textContent = `₹ ${total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     }
 
     function renderShopsDirectoryGridData() {
       const container = document.getElementById('shopsDirectoryTableBodyContainer'); container.innerHTML = "";
       systemGlobalState.cachedShopsDirectory.forEach(s => {
-        container.innerHTML += `<tr><td><b>${escapeHtml(s.shopName)}</b><br><small class="text-muted">${escapeHtml(s.route)}</small></td><td>${escapeHtml(s.ownerName)}<br><small>${escapeHtml(s.mobileNumber)}</small></td><td>${escapeHtml(s.village)}</td><td><span class="badge bg-success">${s.status}</span></td><td><button class="btn btn-sm btn-outline-primary" onclick="openShopFormModal(true, ${s.rowId})">Edit</button></td></tr>`;
+        container.innerHTML += `<tr><td><b>${escapeHtml(s.shopName)}</b><br><small class="text-muted font-monospace">${s.shopId}</small></td><td>${escapeHtml(s.ownerName)}<br><small class="text-muted">${escapeHtml(s.mobileNumber)}</small></td><td>${escapeHtml(s.village)}<br><small class="text-uppercase text-muted fs-7">${escapeHtml(s.route || '-')}</small></td><td><span class="badge ${s.status === 'Active' ? 'bg-success' : 'bg-warning text-dark'}">${s.status}</span></td><td class="text-end"><button class="btn btn-sm btn-outline-primary" onclick="openShopFormModal(true, ${s.rowId})">Edit</button></td></tr>`;
       });
     }
 
     function renderVisitsDirectoryGridData() {
       const container = document.getElementById('visitsDirectoryTableBodyContainer'); container.innerHTML = "";
       systemGlobalState.cachedVisitsDirectory.forEach(v => {
-        container.innerHTML += `<tr><td><b>${escapeHtml(v.shopName)}</b></td><td>${v.visitDate}</td><td><span class="badge bg-warning text-dark">${v.outcome}</span></td><td>${v.nextFollowupDate || '-'}</td><td><button class="btn btn-sm btn-outline-primary" onclick="openVisitFormModal(true, ${v.rowId})">Edit</button></td></tr>`;
+        container.innerHTML += `<tr><td><b>${escapeHtml(v.shopName)}</b></td><td><span class="font-monospace text-secondary fs-7">${v.visitDate}</span></td><td><span class="badge bg-light text-dark border border-secondary-subtle">${v.outcome}</span></td><td><span class="text-danger fw-bold font-monospace fs-7">${v.nextFollowupDate || '-'}</span></td><td class="text-end"><button class="btn btn-sm btn-outline-primary" onclick="openVisitFormModal(true, ${v.rowId})">Edit</button></td></tr>`;
       });
     }
 
     function renderOrdersDirectoryGridData() {
       const container = document.getElementById('ordersDirectoryTableBodyContainer'); container.innerHTML = "";
       systemGlobalState.cachedOrdersDirectory.forEach(o => {
-        container.innerHTML += `<tr><td>${o.orderId}<br><small class="text-muted">${o.orderDate}</small></td><td><b>${escapeHtml(o.shopName)}</b></td><td>${escapeHtml(o.productName)}</td><td>${o.quantity}</td><td>₹${o.totalAmount}</td><td><span class="badge bg-info">${o.orderStatus}</span></td><td><button class="btn btn-sm btn-outline-primary" onclick="openOrderFormModal(true, ${o.rowId})">Edit</button></td></tr>`;
+        container.innerHTML += `<tr><td><span class="font-monospace fw-bold small text-dark">${o.orderId}</span><br><small class="text-muted font-monospace fs-7">${o.orderDate}</small></td><td><b>${escapeHtml(o.shopName)}</b></td><td><small class="text-secondary fw-semibold">${escapeHtml(o.productName)}</small></td><td class="text-end font-monospace">${o.quantity}</td><td class="text-end font-monospace fw-bold text-dark">₹${o.totalAmount.toLocaleString('en-IN')}</td><td><span class="badge ${o.orderStatus === 'Fulfilled Delivered' ? 'bg-success' : 'bg-warning text-dark'}">${o.orderStatus}</span></td><td class="text-end"><button class="btn btn-sm btn-outline-primary" onclick="openOrderFormModal(true, ${o.rowId})">Edit</button></td></tr>`;
       });
     }
 
@@ -307,7 +312,7 @@
       document.getElementById('fieldRowId').value = edit ? id : "";
       if(edit) {
         const s = systemGlobalState.cachedShopsDirectory.find(x => x.rowId === id);
-        if(s) { document.getElementById('fieldShopName').value = s.shopName; document.getElementById('fieldOwnerName').value = s.ownerName; document.getElementById('fieldMobileNumber').value = s.mobileNumber; document.getElementById('fieldVillage').value = s.village; document.getElementById('fieldDistrict').value = s.district; document.getElementById('fieldRoute').value = s.route; document.getElementById('fieldBeatDay').value = s.beatDay; document.getElementById('fieldPotential').value = s.potential; document.getElementById('fieldStatus').value = s.status; }
+        if(s) { document.getElementById('fieldShopName').value = s.shopName; document.getElementById('fieldOwnerName').value = s.ownerName; document.getElementById('fieldMobileNumber').value = s.mobileNumber; document.getElementById('fieldVillage').value = s.village; document.getElementById('fieldDistrict').value = s.district; document.getElementById('fieldShopType').value = s.shopType; document.getElementById('fieldRoute').value = s.route; document.getElementById('fieldBeatDay').value = s.beatDay; document.getElementById('fieldPotential').value = s.potential; document.getElementById('fieldStatus').value = s.status; document.getElementById('fieldRemarks').value = s.remarks; }
       }
       appFormModalBootstrapInstance.show();
     }
@@ -331,11 +336,13 @@
     }
 
     function toggleInterfaceLoadingStateSpinner(show) { document.getElementById('globalSpinner').classList[show ? 'remove' : 'add']('d-none'); }
-    function triggerSystemNotificationAlert(msg, type) { document.getElementById('toastMessageSlot').textContent = msg; appToastMessageSystemBootstrapInstance.show(); }
+    function triggerSystemNotificationAlert(msg, type) { const slot = document.getElementById('appGlobalToast'); slot.classList.remove('bg-success', 'bg-danger'); slot.classList.add(type === 'error' ? 'bg-danger' : 'bg-success'); document.getElementById('toastIconSlot').textContent = type === 'error' ? 'report_problem' : 'check_circle'; document.getElementById('toastMessageSlot').textContent = msg; appToastMessageSystemBootstrapInstance.show(); }
     function escapeHtml(str) { return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : ''; }
-    function filterShopsDirectory() { /* Existing inline structural loop logic */ }
-    function filterVisitsDirectory() { /* Existing inline structural loop logic */ }
-    function filterOrdersDirectory() { /* Existing inline structural loop logic */ }
+    
+    // Scoped stubs for list filtering
+    function filterShopsDirectory() { const q = document.getElementById('searchShopName').value.toLowerCase().trim(); const res = systemGlobalState.cachedShopsDirectory.filter(x => x.shopName.toLowerCase().includes(q) || x.village.toLowerCase().includes(q)); renderShopsDirectoryGridData(res); }
+    function filterVisitsDirectory() { const q = document.getElementById('searchVisitShopName').value.toLowerCase().trim(); const res = systemGlobalState.cachedVisitsDirectory.filter(x => x.shopName.toLowerCase().includes(q)); renderVisitsDirectoryGridData(res); }
+    function filterOrdersDirectory() { const q = document.getElementById('searchOrderIdText').value.toLowerCase().trim(); const res = systemGlobalState.cachedOrdersDirectory.filter(x => x.shopName.toLowerCase().includes(q) || x.orderId.toLowerCase().includes(q)); renderOrdersDirectoryGridData(res); }
   </script>
 </body>
 </html>
