@@ -11,28 +11,41 @@
     body { font-family: system-ui, sans-serif; background-color: var(--bs-light); color: #334155; -webkit-font-smoothing: antialiased; }
     .fw-black { font-weight: 800 !important; } .fs-7 { font-size: 0.8rem !important; }
     .spinner-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(30, 41, 59, 0.45); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-    #sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); height: 100vh; position: sticky; top: 0; z-index: 1040; transition: transform 0.25s ease-in-out; }
+    
+    #sidebar { 
+      width: var(--sidebar-width); 
+      min-width: var(--sidebar-width); 
+      height: 100vh; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1040; 
+      transition: transform 0.25s ease-in-out, margin-left 0.25s ease-in-out; 
+    }
+    
     .nav-pills .nav-link { border-radius: 8px; padding: 0.6rem 1rem; font-weight: 500; color: #fff; transition: background 0.2s ease; }
+    .nav-pills .nav-link:hover { background-color: rgba(255, 255, 255, 0.1); }
     .nav-pills .nav-link.active { background-color: var(--bs-primary); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3); }
     .card-metric { transition: transform 0.2s ease; } .card-metric:hover { transform: translateY(-2px); }
     .text-numeric { font-variant-numeric: tabular-nums; font-weight: 700; }
     .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); z-index: 1030; }
+    
     @media (max-width: 767.98px) {
       #sidebar { position: fixed; left: 0; top: 0; height: 100vh; margin-left: 0; transform: translateX(0); }
       #sidebar.collapsed { transform: translateX(-100%); }
+    }
+    @media (min-width: 768px) {
+      #sidebar.collapsed { margin-left: calc(-1 * var(--sidebar-width)); transform: translateX(0); }
     }
   </style>
 </head>
 <body>
 
-  <!-- MASTER SPINNER LAYER -->
   <div id="globalSpinner" class="spinner-overlay d-none">
     <div class="spinner-border text-primary shadow" role="status" style="width: 3rem; height: 3rem;"></div>
   </div>
 
   <div class="d-flex align-items-stretch min-vh-100 position-relative overflow-hidden">
     
-    <!-- SYSTEM NAVIGATION DRAWER MENU -->
     <nav id="sidebar" class="bg-dark text-white flex-shrink-0 collapsed">
       <div class="sidebar-header p-3 border-bottom border-secondary d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
@@ -55,11 +68,10 @@
 
     <div id="sidebarBackdrop" class="sidebar-backdrop d-none" onclick="toggleSidebarMenu(false)"></div>
 
-    <!-- MAIN CRM CLIENT CONTENT CANVAS -->
     <main class="flex-grow-1 bg-light position-relative overflow-x-hidden d-flex flex-column min-vh-100">
       <header class="navbar navbar-expand navbar-light bg-white px-4 border-bottom shadow-sm sticky-top">
         <div class="container-fluid p-0">
-          <button id="sidebarToggleBtn" class="btn btn-outline-secondary btn-sm me-3" type="button" onclick="toggleSidebarMenu(true)">
+          <button id="sidebarToggleBtn" class="btn btn-outline-secondary btn-sm me-3" type="button" onclick="handleSidebarToggleClick(event)">
             <span class="material-icons-round fs-5 d-block">menu</span>
           </button>
           <span class="navbar-brand m-0 h1 fs-5 fw-semibold text-secondary" id="viewTitleHeader">Dashboard Matrix</span>
@@ -68,7 +80,6 @@
 
       <div class="container-fluid p-3 p-md-4 flex-grow-1" id="mainViewContentBlock">
         
-        <!-- DASHBOARD ELEMENT DISPLAY PORT -->
         <div id="viewContainerDashboard">
           <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-xl-4 mb-4">
             <div class="col"><div class="card border-0 shadow-sm p-3 border-start border-primary border-4 card-metric"><h6 class="text-muted text-uppercase small mb-1 fw-bold">Total Outlets</h6><h3 class="m-0 text-numeric" id="metricTotalShops">0</h3></div></div>
@@ -78,19 +89,16 @@
           </div>
         </div>
         
-        <!-- SHOPS ELEMENT DISPLAY PORT -->
         <div id="viewContainerShops" class="d-none">
           <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-8"><input type="text" id="searchShopName" class="form-control" placeholder="Search Shop Name..." oninput="filterShopsDirectory()"></div><div class="col-4"><button class="btn btn-primary w-100 py-2 btn-sm fw-medium" onclick="openShopFormModal(false)">+ New Shop</button></div></div></div>
           <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-dark"><tr><th>Shop Name</th><th>Owner Info</th><th>Territory Location</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody id="shopsDirectoryTableBodyContainer"></tbody></table></div></div>
         </div>
 
-        <!-- VISITS ELEMENT DISPLAY PORT -->
         <div id="viewContainerVisits" class="d-none">
           <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-8"><input type="text" id="searchVisitShopName" class="form-control" placeholder="Search by Shop Name..." oninput="filterVisitsDirectory()"></div><div class="col-4"><button class="btn btn-primary w-100 py-2 btn-sm fw-medium" onclick="openVisitFormModal(false)">+ Log Visit</button></div></div></div>
           <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-dark"><tr><th>Shop Outlet</th><th>Date Visited</th><th>Outcome</th><th>Next Follow-up</th><th class="text-end">Actions</th></tr></thead><tbody id="visitsDirectoryTableBodyContainer"></tbody></table></div></div>
         </div>
 
-        <!-- ORDERS ELEMENT DISPLAY PORT -->
         <div id="viewContainerOrders" class="d-none">
           <div class="card border-0 shadow-sm p-3 mb-3 bg-white"><div class="row g-2"><div class="col-8"><input type="text" id="searchOrderIdText" class="form-control" placeholder="Search Invoice / Shop Details..." oninput="filterOrdersDirectory()"></div><div class="col-4"><button class="btn btn-primary w-100 py-2 btn-sm fw-medium" onclick="openOrderFormModal(false)">+ Create Order</button></div></div></div>
           <div class="card border-0 shadow-sm overflow-hidden bg-white"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-dark"><tr><th>Order Code</th><th>Target Account</th><th>Product Line</th><th>Quantity</th><th>Grand Total</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody id="ordersDirectoryTableBodyContainer"></tbody></table></div></div>
@@ -100,8 +108,6 @@
     </main>
   </div>
 
-  <!-- INTERACTIVE OVERLAY MODALS STACK -->
-  <!-- SHOPS MODAL LAYER -->
   <div class="modal fade" id="shopFormEditorModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmShopMutationForm" onsubmit="handleFormSubmissionEntry(event)" novalidate>
         <div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="shopFormEditorModalLabel">Add Shop Record</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
@@ -122,17 +128,14 @@
     </form></div></div>
   </div>
 
-  <!-- VISITS LOG MODAL LAYER -->
   <div class="modal fade" id="visitFormEditorModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmVisitMutationForm" onsubmit="handleVisitFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="visitFormEditorModalLabel">Log Visit Audit</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldVisitRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Select Target Shop *</label><select class="form-select" id="fieldVisitShopNameSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Visit Date *</label><input type="date" class="form-control" id="fieldVisitDate" name="visitDate" required></div><div class="col-6"><label class="form-label small fw-bold">Outcome Status *</label><select class="form-select" id="fieldVisitOutcome" name="outcome" required><option value="Order Taken">Order Taken</option><option value="Follow-up Required" selected>Follow-up Required</option><option value="Not Interested">Not Interested</option><option value="Owner Not Available">Owner Not Available</option></select></div><div class="col-12"><label class="form-label small fw-bold">Sample Given *</label><select class="form-select" id="fieldVisitSampleGiven" name="sampleGiven" required><option value="No Sample Given">No Sample Given</option><option value="Moong Papad Sample">Moong Papad Sample</option><option value="Urad Papad Sample">Urad Papad Sample</option><option value="Chana Papad Sample">Chana Papad Sample</option><option value="Punjabi Papad Sample">Punjabi Papad Sample</option><option value="Special Black Masala Sample">Special Black Masala Sample</option></select></div><div class="col-6"><label class="form-label small fw-bold">Competitor Brand</label><input type="text" class="form-control" id="fieldVisitCompBrand" name="competitorBrand"></div><div class="col-6"><label class="form-label small fw-bold">Competitor Price</label><input type="text" class="form-control" id="fieldVisitCompPrice" name="competitorPrice"></div><div class="col-12"><label class="form-label small fw-bold">Field Notes Summary</label><textarea class="form-control" id="fieldVisitNotes" name="notes" rows="2"></textarea></div><div class="col-12"><label class="form-label small fw-bold">Next Follow-up Target Date</label><input type="date" class="form-control" id="fieldVisitNextFollowup" name="nextFollowupDate"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save Visit</button></div></form></div></div>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmVisitMutationForm" onsubmit="handleVisitFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="visitFormEditorModalLabel">Log Visit Summary</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldVisitRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Select Target Shop *</label><select class="form-select" id="fieldVisitShopNameSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Visit Date *</label><input type="date" class="form-control" id="fieldVisitDate" name="visitDate" required></div><div class="col-6"><label class="form-label small fw-bold">Outcome Status *</label><select class="form-select" id="fieldVisitOutcome" name="outcome" required><option value="Order Taken">Order Taken</option><option value="Follow-up Required" selected>Follow-up Required</option><option value="Not Interested">Not Interested</option><option value="Owner Not Available">Owner Not Available</option></select></div><div class="col-12"><label class="form-label small fw-bold">Sample Given *</label><select class="form-select" id="fieldVisitSampleGiven" name="sampleGiven" required><option value="No Sample Given">No Sample Given</option><option value="Moong Papad Sample">Moong Papad Sample</option><option value="Urad Papad Sample">Urad Papad Sample</option><option value="Chana Papad Sample">Chana Papad Sample</option><option value="Punjabi Papad Sample">Punjabi Papad Sample</option><option value="Special Black Masala Sample">Special Black Masala Sample</option></select></div><div class="col-6"><label class="form-label small fw-bold">Competitor Brand</label><input type="text" class="form-control" id="fieldVisitCompBrand" name="competitorBrand"></div><div class="col-6"><label class="form-label small fw-bold">Competitor Price</label><input type="text" class="form-control" id="fieldVisitCompPrice" name="competitorPrice"></div><div class="col-12"><label class="form-label small fw-bold">Field Notes Summary</label><textarea class="form-control" id="fieldVisitNotes" name="notes" rows="2"></textarea></div><div class="col-12"><label class="form-label small fw-bold">Next Follow-up Target Date</label><input type="date" class="form-control" id="fieldVisitNextFollowup" name="nextFollowupDate"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save Visit</button></div></form></div></div>
   </div>
 
-  <!-- ORDERS FORM MODAL LAYER -->
   <div class="modal fade" id="orderFormEditorModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"><div class="modal-content"><form id="crmOrderMutationForm" onsubmit="handleOrderFormSubmissionEntry(event)" novalidate><div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold" id="orderFormEditorModalLabel">Commit New Order</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3"><input type="hidden" id="fieldOrderRowId" name="rowId"><div class="row g-2"><div class="col-12"><label class="form-label small fw-bold">Buyer Shop Target *</label><select class="form-select" id="fieldOrderShopSelect" name="shopName" required></select></div><div class="col-6"><label class="form-label small fw-bold">Booking Date *</label><input type="date" class="form-control" id="fieldOrderDate" name="orderDate" required></div><div class="col-6"><label class="form-label small fw-bold">Select Product *</label><select class="form-select" id="fieldOrderProductSelect" name="productName" onchange="autoCalculateOrderPricingRow()" required></select></div><div class="col-6"><label class="form-label small fw-bold">Quantity (Boxes/Units) *</label><input type="number" class="form-control" id="fieldOrderQuantity" name="quantity" min="1" required oninput="autoCalculateOrderPricingRow()"></div><div class="col-6"><label class="form-label small fw-bold">Rate Per Unit (₹) *</label><input type="number" class="form-control" id="fieldOrderRate" name="rate" min="0" step="0.01" required oninput="autoCalculateOrderPricingRow()"></div><div class="col-12 mt-3"><div class="p-3 bg-light border border-secondary-subtle rounded text-end"><span class="small text-muted me-2">Calculated Total Billing Amount:</span><span class="h4 fw-black text-dark text-numeric" id="lblOrderComputedTotal">₹ 0.00</span></div><input type="hidden" id="fieldOrderStatus" name="orderStatus" value="Pending Delivery"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Book Invoice</button></div></form></div></div>
   </div>
 
-  <!-- TOAST ALERT PANEL -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
     <div id="appGlobalToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex"><div class="toast-body d-flex align-items-center gap-2"><span id="toastIconSlot" class="material-icons-round fs-5">info</span><span id="toastMessageSlot"></span></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
@@ -142,7 +145,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // BIND YOUR LIVE GOOGLE APPS SCRIPT MACRO URL HERE
-    const API_ENDPOINT_ROOT = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE"; 
+    const API_ENDPOINT_ROOT = "https://script.google.com/macros/s/AKfycbwe9zJXBJxadAeXsZuaGTtaS_ZhHgUbuJBVHpC7lMQo8vkB0r8oebDVvdUNgbixhrME/exec"; 
 
     let systemGlobalState = {
       currentViewSlot: 'dashboard', cachedShopsDirectory: [], cachedVisitsDirectory: [], cachedOrdersDirectory: [], cachedProductsCatalog: [], minimalShopLookupList: [], dashboardMetricsSnapshot: {},
@@ -162,8 +165,24 @@
     function toggleSidebarMenu(open) {
       const sidebar = document.getElementById('sidebar');
       const backdrop = document.getElementById('sidebarBackdrop');
-      if (open) { sidebar.classList.remove('collapsed'); if (window.innerWidth < 768) backdrop.classList.remove('d-none'); }
-      else { sidebar.classList.add('collapsed'); backdrop.classList.add('d-none'); }
+      if (!sidebar) return;
+      
+      if (open) { 
+        sidebar.classList.remove('collapsed'); 
+        if (window.innerWidth < 768 && backdrop) backdrop.classList.remove('d-none'); 
+      } else { 
+        sidebar.classList.add('collapsed'); 
+        if (backdrop) backdrop.classList.add('d-none'); 
+      }
+    }
+
+    function handleSidebarToggleClick(e) {
+      e.preventDefault();
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        toggleSidebarMenu(isCollapsed);
+      }
     }
 
     function executeInitialAppBootHandshake() {
@@ -178,7 +197,7 @@
           populateFormFieldsDropdownsFromLookups();
           toggleInterfaceLoadingStateSpinner(false);
         })
-        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Connection Error: Check macro parameters logs.", "error"); });
+        .catch(err => { toggleInterfaceLoadingStateSpinner(false); triggerSystemNotificationAlert("Connection Error: Check sheet config.", "error"); });
     }
 
     function switchView(target) {
@@ -213,8 +232,6 @@
 
     function sendAPICommandViaGet(actionKey, payloadData, successCallback) {
       toggleInterfaceLoadingStateSpinner(true);
-      
-      // Build pure tracking query string parameters to eliminate structural CORS redirects completely
       const queryString = Object.keys(payloadData).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(payloadData[key])}`).join('&');
       
       fetch(`${API_ENDPOINT_ROOT}?action=${actionKey}&${queryString}`)
@@ -339,7 +356,6 @@
     function triggerSystemNotificationAlert(msg, type) { const slot = document.getElementById('appGlobalToast'); slot.classList.remove('bg-success', 'bg-danger'); slot.classList.add(type === 'error' ? 'bg-danger' : 'bg-success'); document.getElementById('toastIconSlot').textContent = type === 'error' ? 'report_problem' : 'check_circle'; document.getElementById('toastMessageSlot').textContent = msg; appToastMessageSystemBootstrapInstance.show(); }
     function escapeHtml(str) { return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : ''; }
     
-    // Scoped stubs for list filtering
     function filterShopsDirectory() { const q = document.getElementById('searchShopName').value.toLowerCase().trim(); const res = systemGlobalState.cachedShopsDirectory.filter(x => x.shopName.toLowerCase().includes(q) || x.village.toLowerCase().includes(q)); renderShopsDirectoryGridData(res); }
     function filterVisitsDirectory() { const q = document.getElementById('searchVisitShopName').value.toLowerCase().trim(); const res = systemGlobalState.cachedVisitsDirectory.filter(x => x.shopName.toLowerCase().includes(q)); renderVisitsDirectoryGridData(res); }
     function filterOrdersDirectory() { const q = document.getElementById('searchOrderIdText').value.toLowerCase().trim(); const res = systemGlobalState.cachedOrdersDirectory.filter(x => x.shopName.toLowerCase().includes(q) || x.orderId.toLowerCase().includes(q)); renderOrdersDirectoryGridData(res); }
